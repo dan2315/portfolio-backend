@@ -1,9 +1,9 @@
-public class LeetCodeResponse
+public class UserStatsResponse
 {
-    public LeetCodeData Data { get; set; }
+    public UserStatsData Data { get; set; }
 }
 
-public class LeetCodeData
+public class UserStatsData
 {
     public List<QuestionCount> AllQuestionsCount { get; set; }
     public MatchedUser MatchedUser { get; set; }

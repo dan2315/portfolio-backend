@@ -18,5 +18,3 @@ public class ProblemsSolvedByLanguage
     public string LanguageName { get; set; }
     public int ProblemsSolved { get; set; }
 }
-
-

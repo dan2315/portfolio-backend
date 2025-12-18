@@ -1,4 +1,4 @@
-public class LCRecentSubmissionsResponse
+public class RecentSubmissionsResponse
 {
     public RecentSubmissionsData Data { get; set; }
 }

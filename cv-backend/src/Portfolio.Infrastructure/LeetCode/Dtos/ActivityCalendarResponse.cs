@@ -1,4 +1,4 @@
-public class LCActivityCalendar
+public class ActivityCalendarResponse
 {
     public CalendarData Data { get; set; }
 }
