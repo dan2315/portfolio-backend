@@ -1,8 +1,3 @@
-public class ActivityCalendarResponse
-{
-    public CalendarData Data { get; set; }
-}
-
 public class CalendarData
 {
     public MatchedUserCalendar MatchedUser { get; set; }

@@ -1,7 +1,8 @@
+using Portfolio.Api.Data;
+
 public class AnonymousSessionMiddleware
 {
     private readonly RequestDelegate _next;
-    private const string CookieName = "anonId";
 
     public AnonymousSessionMiddleware(RequestDelegate next)
     {
@@ -10,10 +11,10 @@ public class AnonymousSessionMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Cookies.TryGetValue(CookieName, out var anonId))
+        if (!context.Request.Cookies.TryGetValue(Keys.AnonIdCookieName, out var anonId))
         {
             anonId = Guid.NewGuid().ToString();
-            context.Response.Cookies.Append(CookieName, anonId, new CookieOptions
+            context.Response.Cookies.Append(Keys.AnonIdCookieName, anonId, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddYears(1),
@@ -22,7 +23,10 @@ public class AnonymousSessionMiddleware
             });
         }
 
-        context.Items[CookieName] = anonId;
+        if (Guid.TryParse(anonId, out var anonGuid))
+        {
+            context.Items[Keys.AnonSessionGuidKey] = anonGuid;
+        }
 
         await _next(context);
     }

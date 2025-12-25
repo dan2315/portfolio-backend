@@ -14,6 +14,7 @@ public class LeetCodeController : ControllerBase
     }
 
     [HttpGet("profile")]
+    [TrackActivity]
     public async Task<ActionResult<LeetCodeProfile>> GetProfile()
     {
         var profile = await _leetCodeService.GetProfileAsync(LeetCodeUsername);

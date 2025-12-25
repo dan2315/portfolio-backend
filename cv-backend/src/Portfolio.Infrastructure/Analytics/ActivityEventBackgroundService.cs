@@ -8,9 +8,7 @@ public sealed class ActivityEventBackgroundService : BackgroundService
     private readonly Channel<ActivityEvent> _channel;
     private readonly IServiceScopeFactory _scopeFactory;
 
-    public ActivityEventBackgroundService(
-        Channel<ActivityEvent> channel,
-        IServiceScopeFactory scopeFactory)
+    public ActivityEventBackgroundService(Channel<ActivityEvent> channel, IServiceScopeFactory scopeFactory)
     {
         _channel = channel;
         _scopeFactory = scopeFactory;
@@ -18,13 +16,18 @@ public sealed class ActivityEventBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var lastFlush = DateTime.UtcNow;
         var buffer = new List<ActivityEvent>(100);
-
-        await foreach (var evt in _channel.Reader.ReadAllAsync(stoppingToken))
+        await foreach (ActivityEvent evt in _channel.Reader.ReadAllAsync(stoppingToken))
         {
             buffer.Add(evt);
+            if (buffer.Count <= 0)
+            {
+                lastFlush = DateTime.UtcNow;
+            }
 
-            if (buffer.Count >= 100)
+            if (buffer.Count >= 100 || 
+                DateTime.UtcNow - lastFlush > TimeSpan.FromSeconds(100))
             {
                 await FlushAsync(buffer);
                 buffer.Clear();

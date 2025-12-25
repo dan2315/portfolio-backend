@@ -1,8 +1,3 @@
-public class LanguagesResponse
-{
-    public LanguagesData Data { get; set; }
-}
-
 public class LanguagesData
 {
     public MatchedUserLanguages MatchedUser { get; set; }

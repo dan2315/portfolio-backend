@@ -1,8 +1,3 @@
-public class UserStatsResponse
-{
-    public UserStatsData Data { get; set; }
-}
-
 public class UserStatsData
 {
     public List<QuestionCount> AllQuestionsCount { get; set; }

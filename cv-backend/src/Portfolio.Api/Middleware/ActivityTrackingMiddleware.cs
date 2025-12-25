@@ -5,9 +5,7 @@ public class ActivityTrackingMiddleware
     private readonly RequestDelegate _next;
     private readonly IActivityEventWriter _writer;
 
-    public ActivityTrackingMiddleware(
-        RequestDelegate next,
-        IActivityEventWriter writer)
+    public ActivityTrackingMiddleware(RequestDelegate next, IActivityEventWriter writer)
     {
         _next = next;
         _writer = writer;

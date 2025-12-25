@@ -1,8 +1,3 @@
-public class RecentSubmissionsResponse
-{
-    public RecentSubmissionsData Data { get; set; }
-}
-
 public class RecentSubmissionsData
 {
     public SubmissionItem[] RecentAcSubmissionList  { get; set; }

@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Portfolio.Domain\Portfolio.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
