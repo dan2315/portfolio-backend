@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Microsoft.OpenApi;
 using Portfolio.Application;
 using Portfolio.Infrastructure;
 
@@ -15,9 +17,12 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
-builder.Services.AddInfrastruture(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -28,6 +33,8 @@ builder.Services.AddSwaggerGen(options =>
        Version = "v1",
        Description = "idk"
    });
+
+    options.OperationFilter<AddCustomHeaderOperationFilter>();
 });
 
 var app = builder.Build();

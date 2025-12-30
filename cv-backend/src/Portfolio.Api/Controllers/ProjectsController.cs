@@ -23,9 +23,27 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{slug}")]
-    public async Task<ActionResult<DetailedProjectDTO>> GetProject(string slug)
+    [RequireAnonSession]
+    public async Task<ActionResult<ProjectDTO>> GetProject(string slug)
     {
-        return Ok(await _projectsService.GetProjectBySlugAsync(slug));
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var project = await _projectsService.GetProjectBySlugAsync(slug, anonSession);
+        if (project == null)
+        return NotFound();
+
+        return Ok(project);
+    }
+
+    [HttpGet("{id}")]
+    [RequireAnonSession]
+    public async Task<ActionResult<ProjectDTO>> GetProjectById(string id)
+    {
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var project = await _projectsService.GetProjectByIdAsync(Guid.Parse(id), anonSession);
+        if (project == null)
+        return NotFound();
+
+        return Ok(project);
     }
 
     [HttpPost("{slug}/reaction")]

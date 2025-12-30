@@ -10,7 +10,6 @@ public class Project
     public int? PrideRating { get; set; }
     public string[]? Technologies { get; set; }
     public string? RepositoryUrl { get; set; }
-    public string? LiveUrl { get; set; }
     public bool IsPublished { get; set; }
     public ICollection<ProjectReaction> Reactions { get; set; } = new List<ProjectReaction>();
     public DateTime CreatedAt { get; set; }

@@ -32,7 +32,7 @@ public class GitHubClient : IGitHubClient
             response.Repository.Url,
             response.Repository.HomepageUrl,
             new Portfolio.Domain.Entities.Language{
-                Name = response.Repository.PrimaryLanguage.Name,
+                Name = response.Repository.PrimaryLanguage?.Name,
                 Color = response.Repository.PrimaryLanguage?.Color },
             response.Repository.Languages.Edges.Select(l => new Portfolio.Domain.Entities.Language
             {

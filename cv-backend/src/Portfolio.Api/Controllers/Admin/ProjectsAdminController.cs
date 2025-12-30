@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Portfolio.Api.Data;
 using Portfolio.Application.Projects.DTOs;
 using Portfolio.Application.Projects.Interfaces;
 
 [ApiController]
+[RequireAdminApiKey]
 [Route("/admin/projects")]
 public class ProjectsAdminController : ControllerBase
 {
@@ -14,42 +14,41 @@ public class ProjectsAdminController : ControllerBase
         _projectsService = projectsService;
     }
 
-    [HttpGet("")]
-    [RequireAnonSession]
-    public async Task<ActionResult<IReadOnlyList<ProjectDTO>>> GetProjects()
-    {
-        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
-        return Ok(await _projectsService.GetProjectsAsync(anonSession));
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ProjectDTO>> GetProjectById(string id)
-    {
-        var project = await _projectsService.GetProjectByIdAsync(Guid.Parse(id));
-        if (project == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(project);
-    }
-
-    [HttpPost("")]
+    [HttpPost]
     public async Task<ActionResult> CreateProject([FromBody] CreateProjectDTO projectDTO)
     {
         await _projectsService.CreateProject(projectDTO);
-        return Ok();
+        return Ok(new {message = "Project successfully created"});
     }
 
-    [HttpPut("{id}")]
-    void UpdateProject()
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult<ProjectDTO>> UpdateProject(
+        Guid id,
+        [FromBody] UpdateProjectDTO projectDTO)
     {
-        
+        var updatedProject = await _projectsService.UpdateProjectAsync(id, projectDTO);
+
+        if (updatedProject == null)
+            return NotFound();
+
+        return Ok(updatedProject);
     }
 
-    [HttpPatch("{id}")]
-    void TogglePublishProject()
+    [HttpPatch("{id:guid}/publish")]
+    public async Task<ActionResult> TogglePublishProject(Guid id)
     {
-        
+        var toggled = await _projectsService.TogglePublishAsync(id);
+
+        if (!toggled)
+            return NotFound();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeleteProject(Guid id)
+    {
+        await _projectsService.DeleteProjectAsync(id);
+        return Ok(new {message = "Project successfully deleted"});
     }
 }

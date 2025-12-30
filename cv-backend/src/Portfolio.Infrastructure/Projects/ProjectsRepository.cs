@@ -19,22 +19,28 @@ public class ProjectsRepository : IProjectsRepository
     public async Task AddAsync(Project project)
     {
         _db.Projects.Add(project);
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var project = await _db.Projects.FindAsync(id);
+        if (project == null)
+            return;
+
+        _db.Projects.Remove(project);
+        await _db.SaveChangesAsync();
     }
 
-    public Task<Project?> GetByIdAsync(Guid id)
+    public async Task<Project?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return _db.Projects.Include(p => p.Reactions).FirstOrDefault(p => p.Id == id);
     }
 
-    public Task UpdateAsync(Project project)
+    public async Task UpdateAsync(Project project)
     {
-        throw new NotImplementedException();
+        _db.Projects.Update(project);
+        await _db.SaveChangesAsync();
     }
 
     public async Task<Project?> GetBySlug(string slug)
