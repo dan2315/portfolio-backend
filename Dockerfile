@@ -1,16 +1,16 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
-WORKDIR /src
+WORKDIR /
 
 COPY cv-backend.sln .
 
-COPY src/Portfolio.Api/Portfolio.Api.csproj src/Portfolio.Api/
-COPY src/Portfolio.Application/Portfolio.Application.csproj src/Portfolio.Application/
-COPY src/Portfolio.Domain/Portfolio.Domain.csproj src/Portfolio.Domain/
-COPY src/Portfolio.Infrastructure/Portfolio.Infrastructure.csproj src/Portfolio.Infrastructure/
+COPY cv-backend/src/Portfolio.Api/Portfolio.Api.csproj cv-backend/src/Portfolio.Api/
+COPY cv-backend/src/Portfolio.Application/Portfolio.Application.csproj cv-backend/src/Portfolio.Application/
+COPY cv-backend/src/Portfolio.Domain/Portfolio.Domain.csproj cv-backend/src/Portfolio.Domain/
+COPY cv-backend/src/Portfolio.Infrastructure/Portfolio.Infrastructure.csproj cv-backend/src/Portfolio.Infrastructure/
 
 RUN dotnet restore
 
-COPY src ./src
+COPY cv-backend/src ./src
 
 RUN dotnet publish src/Portfolio.Api \
     -c Release \
