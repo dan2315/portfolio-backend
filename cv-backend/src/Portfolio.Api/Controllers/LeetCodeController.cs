@@ -24,21 +24,21 @@ public class LeetCodeController : ControllerBase
     [HttpGet("languages")]
     public async Task<ActionResult<LeetCodeLanguages>> GetLanguages()
     {
-        var profile = await _leetCodeService.GetLanguagesAsync(LeetCodeUsername);
-        return Ok(profile);
+        var langs = await _leetCodeService.GetLanguagesAsync(LeetCodeUsername);
+        return Ok(langs);
     }
 
     [HttpGet("submissions")]
     public async Task<ActionResult<LeetCodeSubmissions>> GetSubmissions([FromQuery] int limit = 8)
     {
-        var profile = await _leetCodeService.GetSubmissionsAsync(LeetCodeUsername, limit);
-        return Ok(profile);
+        var submissions = await _leetCodeService.GetSubmissionsAsync(LeetCodeUsername, limit);
+        return Ok(submissions);
     }
 
     [HttpGet("activity")]
     public async Task<ActionResult<LeetCodeActivity>> GetActivity([FromQuery] int? year)
     {
-        var profile = await _leetCodeService.GetActivityAsync(LeetCodeUsername, year);
-        return Ok(profile);
+        var activity = await _leetCodeService.GetActivityAsync(LeetCodeUsername, year);
+        return Ok(activity);
     }
 }
