@@ -1,15 +1,26 @@
 using System.Text.Json;
-using Microsoft.OpenApi;
 using Portfolio.Application;
 using Portfolio.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string[] allowedOrigins;
+
+if (builder.Environment.IsDevelopment())
+{
+    allowedOrigins = ["http://localhost:3000"];
+} 
+else
+{
+    allowedOrigins = ["https://interactive-porfolio.vercel.app"];
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
