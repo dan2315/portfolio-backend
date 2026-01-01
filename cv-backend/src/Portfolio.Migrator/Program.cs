@@ -103,24 +103,6 @@ try
         return 0;
     }
 
-    // Confirm in production
-    if (!IsLocalEnvironment(connectionString))
-    {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-
-        Console.WriteLine("⚠️  WARNING: This appears to be a non-local database!");
-        Console.ResetColor();
-        Console.Write("Are you sure you want to continue? (yes/no): ");
-        
-        var confirmation = Console.ReadLine()?.Trim().ToLower();
-        if (confirmation != "yes")
-        {
-            Console.WriteLine("Migration cancelled.");
-            return 0;
-        }
-        Console.WriteLine();
-    }
-
     Console.WriteLine("⚙️  Applying migrations...");
     var startTime = DateTime.UtcNow;
     
@@ -151,13 +133,4 @@ catch (Exception ex)
     Console.WriteLine(ex.StackTrace);
     
     return 1;
-}
-
-static bool IsLocalEnvironment(string connectionString)
-{
-    var lowerConnection = connectionString.ToLower();
-    return lowerConnection.Contains("localhost") 
-        || lowerConnection.Contains("127.0.0.1")
-        || lowerConnection.Contains("host=localhost")
-        || lowerConnection.Contains("host=127.0.0.1");
 }

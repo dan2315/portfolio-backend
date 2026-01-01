@@ -35,6 +35,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddUserSecrets<Program>(optional: true)
+    .AddEnvironmentVariables();
+
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
 builder.Configuration["ConnectionStrings:Postgres"] = dbConnectionString;
 builder.Services.AddInfrastructure(builder.Configuration);

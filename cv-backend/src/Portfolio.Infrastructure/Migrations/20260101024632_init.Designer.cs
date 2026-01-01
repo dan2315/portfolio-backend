@@ -12,7 +12,7 @@ using Portfolio.Infrastructure.Persistence;
 namespace Portfolio.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251221012326_init")]
+    [Migration("20260101024632_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -84,9 +84,6 @@ namespace Portfolio.Infrastructure.Migrations
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("LiveUrl")
-                        .HasColumnType("text");
 
                     b.Property<int>("PrideRating")
                         .HasColumnType("integer");

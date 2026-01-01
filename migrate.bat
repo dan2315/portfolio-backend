@@ -87,15 +87,3 @@ echo.
 docker run --rm ^
   -e POSTGRES_CONNECTION="%POSTGRES_CONNECTION%" ^
   portfolio-migrator %DRY_RUN% %VERBOSE%
-
-if errorlevel 1 (
-    echo.
-    echo [ERROR] Migration failed!
-    pause
-    exit /b 1
-)
-
-echo.
-echo [SUCCESS] Migration completed successfully!
-echo.
-pause

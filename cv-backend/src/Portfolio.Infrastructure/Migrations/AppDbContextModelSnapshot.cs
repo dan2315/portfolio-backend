@@ -82,9 +82,6 @@ namespace Portfolio.Infrastructure.Migrations
                     b.Property<bool>("IsPublished")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("LiveUrl")
-                        .HasColumnType("text");
-
                     b.Property<int>("PrideRating")
                         .HasColumnType("integer");
 

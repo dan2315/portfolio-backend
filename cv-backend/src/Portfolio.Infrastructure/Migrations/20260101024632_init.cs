@@ -45,7 +45,6 @@ namespace Portfolio.Infrastructure.Migrations
                     PrideRating = table.Column<int>(type: "integer", nullable: false),
                     Technologies = table.Column<string[]>(type: "text[]", nullable: true),
                     RepositoryUrl = table.Column<string>(type: "text", nullable: true),
-                    LiveUrl = table.Column<string>(type: "text", nullable: true),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
