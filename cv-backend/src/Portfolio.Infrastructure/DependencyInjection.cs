@@ -10,6 +10,7 @@ using Portfolio.Infrastructure.GitHub;
 using Portfolio.Infrastructure.GitHub.Cache;
 using Portfolio.Infrastructure.LeetCode;
 using Portfolio.Infrastructure.Persistence;
+using Microsoft.Extensions.Hosting;
 
 namespace Portfolio.Infrastructure;
 

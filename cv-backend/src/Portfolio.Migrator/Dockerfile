@@ -9,19 +9,16 @@ COPY ["cv-backend/src/Portfolio.Domain/Portfolio.Domain.csproj", "cv-backend/src
 COPY ["cv-backend/src/Portfolio.Infrastructure/Portfolio.Infrastructure.csproj", "cv-backend/src/Portfolio.Infrastructure/"]
 COPY ["cv-backend/src/Portfolio.Migrator/Portfolio.Migrator.csproj", "cv-backend/src/Portfolio.Migrator/"]
 
+RUN ls -la /cv-backend/src/Portfolio.Migrator/
+
 RUN dotnet restore
 
 COPY ["cv-backend/src", "./src"]
 
-RUN dotnet publish src/Portfolio.Api -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish src/Portfolio.Migrator -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
 WORKDIR /app
+COPY --from=build /app/publish .
 
-ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT:-8080}
-ENV ASPNETCORE_ENVIRONMENT=Production
-
-COPY --from=build ["/app/publish", "."]
-
-EXPOSE 8080
-ENTRYPOINT ["dotnet", "Portfolio.Api.dll"]
+ENTRYPOINT ["dotnet", "Portfolio.Migrator.dll"]

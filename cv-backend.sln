@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Domain", "cv-backend\src\Portfolio.Domain\Portfolio.Domain.csproj", "{ABF42366-4672-43DD-87F4-1B2EEA787BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Migrator", "cv-backend\src\Portfolio.Migrator\Portfolio.Migrator.csproj", "{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,18 @@ Global
 		{ABF42366-4672-43DD-87F4-1B2EEA787BAA}.Release|x64.Build.0 = Release|Any CPU
 		{ABF42366-4672-43DD-87F4-1B2EEA787BAA}.Release|x86.ActiveCfg = Release|Any CPU
 		{ABF42366-4672-43DD-87F4-1B2EEA787BAA}.Release|x86.Build.0 = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|x64.Build.0 = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|x64.Build.0 = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +97,6 @@ Global
 		{EC881223-800B-4020-8D7E-C727FA87E2C8} = {A50B9D99-DFA5-AC38-2EB8-CCD9A7725534}
 		{ABA00198-9046-48CF-B59D-6664D62EC976} = {A50B9D99-DFA5-AC38-2EB8-CCD9A7725534}
 		{ABF42366-4672-43DD-87F4-1B2EEA787BAA} = {A50B9D99-DFA5-AC38-2EB8-CCD9A7725534}
+		{6D6FDDB2-AD40-40EF-AFFD-9AB403BA6033} = {A50B9D99-DFA5-AC38-2EB8-CCD9A7725534}
 	EndGlobalSection
 EndGlobal

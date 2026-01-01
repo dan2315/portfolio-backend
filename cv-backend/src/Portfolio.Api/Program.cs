@@ -5,14 +5,22 @@ using Portfolio.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 string[] allowedOrigins;
+string? dbConnectionString;
 
 if (builder.Environment.IsDevelopment())
 {
     allowedOrigins = ["http://localhost:3000"];
+    dbConnectionString = builder.Configuration.GetConnectionString("Postgres");
 } 
 else
 {
     allowedOrigins = ["https://interactive-porfolio.vercel.app"];
+    dbConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
+    Console.WriteLine("Connection string " + dbConnectionString);
+    if (string.IsNullOrEmpty(dbConnectionString))
+    {
+        throw new InvalidOperationException("POSTGRES_CONNECTION environment variable is not set.");
+    }
 }
 
 builder.Services.AddCors(options =>
@@ -28,6 +36,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
+builder.Configuration["ConnectionStrings:Postgres"] = dbConnectionString;
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllers().AddJsonOptions(options =>
