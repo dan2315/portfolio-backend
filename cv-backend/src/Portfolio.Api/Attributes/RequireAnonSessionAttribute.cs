@@ -5,7 +5,6 @@ using Portfolio.Api.Data;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class RequireAnonSessionAttribute : Attribute, IAsyncActionFilter
 {
-    private const string CookieName = "anonId";
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
