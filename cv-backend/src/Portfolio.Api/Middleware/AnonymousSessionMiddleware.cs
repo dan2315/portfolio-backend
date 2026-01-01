@@ -18,7 +18,7 @@ public class AnonymousSessionMiddleware
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddYears(1),
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Secure = context.Request.IsHttps
             });
         }
