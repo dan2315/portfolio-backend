@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Portfolio.Application;
+using Portfolio.Application.StaticContent;
 using Portfolio.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +43,11 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SMTP"));
 builder.Configuration["ConnectionStrings:Postgres"] = dbConnectionString;
+
+builder.Services.AddSingleton(sp => 
+    new StaticContentPath(Path.Combine(sp.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "StaticContent")));
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddControllers().AddJsonOptions(options =>
