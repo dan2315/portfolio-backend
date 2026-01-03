@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Portfolio.Application;
+using Portfolio.Application.Options;
 using Portfolio.Application.StaticContent;
 using Portfolio.Infrastructure;
 
@@ -43,7 +44,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
-builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("SMTP"));
+builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
 builder.Configuration["ConnectionStrings:Postgres"] = dbConnectionString;
 
 builder.Services.AddSingleton(sp => 
