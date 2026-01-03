@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Portfolio.Application.Email.Interfaces;
 using Portfolio.Application.Interfaces;
 using Portfolio.Application.Projects.Interfaces;
 using Portfolio.Infrastructure.GitHub;
 using Portfolio.Infrastructure.GitHub.Cache;
 using Portfolio.Infrastructure.LeetCode;
 using Portfolio.Infrastructure.Persistence;
-using Microsoft.Extensions.Hosting;
 
 namespace Portfolio.Infrastructure;
 
@@ -30,6 +30,8 @@ public static class DependencyInjection
         {
             options.UseNpgsql(configuration.GetConnectionString("Postgres"));
         });
+
+        services.AddSingleton<IEmailService, EmailService>();
 
         Channel<ActivityEvent> channel = Channel.CreateUnbounded<ActivityEvent>();
         services.AddSingleton(channel);
