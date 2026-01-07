@@ -16,7 +16,11 @@ if (builder.Environment.IsDevelopment())
 } 
 else
 {
-    allowedOrigins = ["https://interactive-porfolio.vercel.app"];
+    allowedOrigins = [
+        "https://interactive-porfolio.vercel.app",
+        "https://portfolio.danielthedod.dev/",
+        "https://www.portfolio.danielthedod.dev/",
+        ];
     dbConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
     Console.WriteLine("Connection string " + dbConnectionString);
     if (string.IsNullOrEmpty(dbConnectionString))
