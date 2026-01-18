@@ -8,11 +8,14 @@ COPY ["cv-backend/src/Portfolio.Application/Portfolio.Application.csproj", "cv-b
 COPY ["cv-backend/src/Portfolio.Domain/Portfolio.Domain.csproj", "cv-backend/src/Portfolio.Domain/"]
 COPY ["cv-backend/src/Portfolio.Infrastructure/Portfolio.Infrastructure.csproj", "cv-backend/src/Portfolio.Infrastructure/"]
 
-RUN dotnet restore
+RUN dotnet restore cv-backend/src/Portfolio.Api/Portfolio.Api.csproj 
 
-COPY ["cv-backend/src", "./src"]
+COPY ["cv-backend/src/Portfolio.Api", "cv-backend/src/Portfolio.Api/"]
+COPY ["cv-backend/src/Portfolio.Application", "cv-backend/src/Portfolio.Application/"]
+COPY ["cv-backend/src/Portfolio.Domain", "cv-backend/src/Portfolio.Domain/"]
+COPY ["cv-backend/src/Portfolio.Infrastructure", "cv-backend/src/Portfolio.Infrastructure/"]
 
-RUN dotnet publish src/Portfolio.Api -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish cv-backend/src/Portfolio.Api -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
