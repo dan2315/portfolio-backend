@@ -1,6 +1,7 @@
 using System.Threading.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Portfolio.Application.Analytics;
 using Portfolio.Infrastructure.Persistence;
 
 public sealed class ActivityEventBackgroundService : BackgroundService

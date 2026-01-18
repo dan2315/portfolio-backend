@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Portfolio.Application.Messages;
+using Portfolio.Application.Messages.Interfaces;
 using Portfolio.Application.Projects;
 using Portfolio.Application.Projects.Interfaces;
 
@@ -11,6 +13,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ILeetCodeService, LeetCodeService>();
         services.AddScoped<IProjectsService, ProjectsService>();
+        services.AddScoped<IMessagesService, MessagesService>();
 
         return services;
     }

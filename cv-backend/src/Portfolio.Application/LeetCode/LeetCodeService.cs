@@ -13,7 +13,8 @@ public class LeetCodeService : ILeetCodeService
 
     public Task<LeetCodeActivity> GetActivityAsync(string username, int? year)
     {
-        var resolvedYear = year ?? DateTime.Now.Year;
+        // var resolvedYear = year ?? DateTime.Now.Year;
+        var resolvedYear = year ?? 2025;
         return _client.GetActivityAsync(username, resolvedYear);
     }
 

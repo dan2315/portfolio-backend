@@ -1,5 +1,6 @@
 
 using System.Threading.Channels;
+using Portfolio.Application.Analytics;
 
 public class ActivityEventWriter : IActivityEventWriter
 {

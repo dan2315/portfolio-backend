@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Portfolio.Application.Analytics;
 using Portfolio.Domain.Entities;
 using Portfolio.Infrastructure.Persistence.Configurations;
 
@@ -11,11 +12,13 @@ public sealed class AppDbContext : DbContext
     public DbSet<ActivityEvent> ActivityEvents => Set<ActivityEvent>();
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<ProjectReaction> ProjectReactions => Set<ProjectReaction>();
+    public DbSet<Message> Messages => Set<Message>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ActivityEventsConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectsConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectReactionsConfiguration());
+        modelBuilder.ApplyConfiguration(new MessagesConfiguration());
     }
 }

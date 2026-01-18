@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using Portfolio.Api.DTOs;
 using Portfolio.Application.Email.Interfaces;
 using Portfolio.Application.Messages.DTOs;
 using Portfolio.Application.Messages.Interfaces;
-using Portfolio.Domain.Entities;
 
-namespace Portfolio.Api.Controllers;
+namespace Portfolio.Api.Controllers.Admin;
 
 [ApiController]
-[Route("/contact")]
+[RequireAdminApiKey]
+[Route("/admin/contact")]
 public class ContactAdminController : ControllerBase
 {
     private readonly IEmailService _emailService;
@@ -22,17 +21,19 @@ public class ContactAdminController : ControllerBase
         _myEmail = configuration["SMTP:User"] ?? throw new Exception("Configuration for SMTP:User is not set");
     }
 
-    [HttpPost("messages")]
-    public async Task<ActionResult<SendEmailResponse>> RecieveEmail(MessageDTO request)
+    [HttpGet("messages")]
+    public async Task<ActionResult<IReadOnlyCollection<AdminMessageDTO>>> GetAllMessages([FromQuery] string? filter)
     {
-        try
-        {
-            await _messagesService.Add(request);
-            return Ok(new SendEmailResponse(true));
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new SendEmailResponse(false, $"Failed to save email: {e.Message}"));
-        }
+        var messages = await _messagesService.GetAll(filter);
+
+        return Ok(messages);
+    } 
+
+    [HttpPatch("messages")]
+    public async Task<ActionResult> MarkMessagesAsProcessed([FromBody] IReadOnlyCollection<Guid> messageIds)
+    {
+        await _messagesService.MarkProcessed(messageIds);
+
+        return Ok();
     }
 }

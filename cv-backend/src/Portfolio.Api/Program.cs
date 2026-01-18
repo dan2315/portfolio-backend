@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Portfolio.Api.Configuration;
 using Portfolio.Application;
 using Portfolio.Application.Options;
 using Portfolio.Application.StaticContent;
@@ -6,54 +7,29 @@ using Portfolio.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string[] allowedOrigins;
-string? dbConnectionString;
-
-if (builder.Environment.IsDevelopment())
-{
-    allowedOrigins = ["http://localhost:3000"];
-    dbConnectionString = builder.Configuration.GetConnectionString("Postgres");
-} 
-else
-{
-    allowedOrigins = [
-        "https://interactive-porfolio.vercel.app",
-        "https://portfolio.danielthedod.dev",
-        "https://www.portfolio.danielthedod.dev",
-        ];
-    dbConnectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
-    Console.WriteLine("Connection string " + dbConnectionString);
-    if (string.IsNullOrEmpty(dbConnectionString))
-    {
-        throw new InvalidOperationException("POSTGRES_CONNECTION environment variable is not set.");
-    }
-}
+var env = builder.Environment;
+var conf = builder.Configuration;
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins(allowedOrigins)
+            .WithOrigins(env.GetAllowedOrigins())
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
     });
 });
 
-builder.Configuration
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .AddUserSecrets<Program>(optional: true)
-    .AddEnvironmentVariables();
+conf.AddApplicationVariables(env);
 
 builder.Services.Configure<GitHubOptions>(builder.Configuration.GetSection("GitHub"));
 builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("SendGrid"));
-builder.Configuration["ConnectionStrings:Postgres"] = dbConnectionString;
 
 builder.Services.AddSingleton(sp => 
     new StaticContentPath(Path.Combine(sp.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "StaticContent")));
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(conf);
 builder.Services.AddApplication();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

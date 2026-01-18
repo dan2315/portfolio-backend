@@ -24,7 +24,7 @@ public class ActivityTrackingMiddleware
         await _next(context);
         sw.Stop();
 
-        await _writer.WriteAsync(new ActivityEvent
+        await _writer.WriteAsync(new Portfolio.Application.Analytics.ActivityEvent
         {
             Timestamp = DateTimeOffset.UtcNow,
             EventType = "api_call",

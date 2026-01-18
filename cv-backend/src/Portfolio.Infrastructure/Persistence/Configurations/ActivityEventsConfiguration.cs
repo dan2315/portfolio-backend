@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Portfolio.Application.Analytics;
 using Portfolio.Domain.Entities;
 
 namespace Portfolio.Infrastructure.Persistence.Configurations;

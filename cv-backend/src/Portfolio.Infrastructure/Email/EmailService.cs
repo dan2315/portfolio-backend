@@ -1,6 +1,4 @@
 
-using System.Net;
-using System.Net.Mail;
 using Microsoft.Extensions.Options;
 using Portfolio.Application.Email.Interfaces;
 using Portfolio.Application.Options;
