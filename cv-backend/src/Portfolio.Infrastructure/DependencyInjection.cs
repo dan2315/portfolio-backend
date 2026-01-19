@@ -35,7 +35,15 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options =>
         {
             Console.WriteLine("Postgres connection string: " + configuration.GetConnectionString("Postgres"));
-            options.UseNpgsql(configuration.GetConnectionString("Postgres"));
+            options.UseNpgsql(configuration.GetConnectionString("Postgres"),
+            npgsql =>
+            {
+                npgsql.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(5),
+                    errorCodesToAdd: null
+                );
+            });
         });
 
         services.AddSingleton<IEmailService, EmailService>();
