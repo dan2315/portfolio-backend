@@ -6,16 +6,16 @@ Console.WriteLine("  Portfolio Database Migrator");
 Console.WriteLine("=================================");
 Console.WriteLine();
 
-var connectionString = Environment.GetEnvironmentVariable("POSTGRES_CONNECTION");
+var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Postgres");
 
 if (string.IsNullOrEmpty(connectionString))
 {
     Console.ForegroundColor = ConsoleColor.Red;
-    Console.WriteLine("❌ Error: POSTGRES_CONNECTION environment variable is not set.");
+    Console.WriteLine("❌ Error: ConnectionStrings__Postgres environment variable is not set.");
     Console.ResetColor();
     Console.WriteLine();
     Console.WriteLine("Usage:");
-    Console.WriteLine("  export POSTGRES_CONNECTION='Host=localhost;Database=portfolio;Username=user;Password=pass'");
+    Console.WriteLine("  export ConnectionStrings__Postgres='Host=localhost;Database=portfolio;Username=user;Password=pass'");
     Console.WriteLine("  dotnet run");
     return 1;
 }

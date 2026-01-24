@@ -15,18 +15,18 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("")]
-    [RequireAnonSession]
+    [RequireAnonIdentity]
     public async Task<ActionResult<IReadOnlyList<ProjectDTO>>> GetProjects()
     {
-        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonIdCookieName]!;
         return Ok(await _projectsService.GetProjectsAsync(anonSession));
     }
 
     [HttpGet("{slug}")]
-    [RequireAnonSession]
+    [RequireAnonIdentity]
     public async Task<ActionResult<ProjectDTO>> GetProject(string slug)
     {
-        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonIdCookieName]!;
         var project = await _projectsService.GetProjectBySlugAsync(slug, anonSession);
         if (project == null)
         return NotFound();
@@ -35,10 +35,10 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [RequireAnonSession]
+    [RequireAnonIdentity]
     public async Task<ActionResult<ProjectDTO>> GetProjectById(string id)
     {
-        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonIdCookieName]!;
         var project = await _projectsService.GetProjectByIdAsync(Guid.Parse(id), anonSession);
         if (project == null)
         return NotFound();
@@ -47,10 +47,10 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost("{slug}/reaction")]
-    [RequireAnonSession]
+    [RequireAnonIdentity]
     public async Task<ActionResult<ProjectReactionsDTO>> AddReaction(string slug, [FromBody] string emoji)
     {
-        var anonSession = (Guid) HttpContext.Items[Keys.AnonSessionGuidKey]!;
+        var anonSession = (Guid) HttpContext.Items[Keys.AnonIdCookieName]!;
         return await _projectsService.ToggleReactionAsync(slug, emoji, anonSession);
     }
 }

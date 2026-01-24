@@ -6,6 +6,6 @@ public class ProjectReaction
     public Guid ProjectId { get; set; }
     public Project Project { get; set; } = null!;
     public string Emoji { get; set; } = null!;
-    public Guid AnonymousSessionId { get; set; }
+    public Guid AnonymousId { get; set; }
     public DateTime CreatedAt { get; set; }
 }

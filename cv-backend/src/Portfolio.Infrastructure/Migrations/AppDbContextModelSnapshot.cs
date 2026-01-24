@@ -22,7 +22,7 @@ namespace Portfolio.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ActivityEvent", b =>
+            modelBuilder.Entity("Portfolio.Application.Analytics.ActivityEvent", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,7 +30,10 @@ namespace Portfolio.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<Guid?>("AnonymousSessionId")
+                    b.Property<string>("AdditionalData")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("AnonymousId")
                         .HasColumnType("uuid");
 
                     b.Property<long>("DurationMs")
@@ -41,15 +44,28 @@ namespace Portfolio.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Method")
-                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Processed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Referer")
                         .HasColumnType("text");
 
                     b.Property<string>("Route")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("SessionId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("StatusCode")
                         .HasColumnType("integer");
+
+                    b.Property<long?>("TimeOnPageMs")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("timestamp with time zone");
@@ -57,12 +73,41 @@ namespace Portfolio.Infrastructure.Migrations
                     b.Property<string>("UserAgent")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.ToTable("activity_events", (string)null);
+                });
+
+            modelBuilder.Entity("Portfolio.Domain.Entities.ActivitySession", b =>
+                {
+                    b.Property<Guid>("SessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AdditionalData")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CartridgesInserted")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ContactAttempted")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PagesViewed")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("TotalTimeMs")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("SessionId");
+
+                    b.ToTable("activity_sessions", (string)null);
                 });
 
             modelBuilder.Entity("Portfolio.Domain.Entities.Message", b =>
@@ -146,7 +191,7 @@ namespace Portfolio.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AnonymousSessionId")
+                    b.Property<Guid>("AnonymousId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")

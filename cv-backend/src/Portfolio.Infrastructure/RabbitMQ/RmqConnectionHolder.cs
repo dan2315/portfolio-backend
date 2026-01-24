@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using RabbitMQ.Client;
 
 namespace Portfolio.Infrastructure.RabbitMQ;
@@ -23,14 +22,29 @@ public class RmqConnectionHolder : IAsyncDisposable
         );
 
         await _channel.QueueDeclareAsync(
-            queue: "analytics.activity",
+            queue: "analytics.activity-live",
             durable: true,
             exclusive: false,
             autoDelete: false
         );
 
+        await _channel.QueueDeclareAsync(
+            queue: "analytics.activity-history",
+            durable: true,
+            exclusive: false,
+            autoDelete: false
+        );
+
+        
+
         await _channel.QueueBindAsync(
-            queue: "analytics.activity",
+            queue: "analytics.activity-live",
+            exchange: "analytics",
+            routingKey: "activity.*"
+        );
+
+        await _channel.QueueBindAsync(
+            queue: "analytics.activity-history",
             exchange: "analytics",
             routingKey: "activity.*"
         );

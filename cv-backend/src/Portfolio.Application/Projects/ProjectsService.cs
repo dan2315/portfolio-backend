@@ -71,7 +71,7 @@ public class ProjectsService : IProjectsService
         var newReaction = new ProjectReaction
         {
             Emoji = emoji,
-            AnonymousSessionId = anonSession,
+            AnonymousId = anonSession,
             ProjectId = project.Id,
             CreatedAt = DateTime.UtcNow
         };
@@ -80,7 +80,7 @@ public class ProjectsService : IProjectsService
         .GroupBy(r => r.Emoji)
         .ToDictionary(g => g.Key, g => g.Count());
 
-        ProjectReaction? existingReaction = project.Reactions.FirstOrDefault(r => r.AnonymousSessionId == anonSession);
+        ProjectReaction? existingReaction = project.Reactions.FirstOrDefault(r => r.AnonymousId == anonSession);
         if (existingReaction?.Emoji == newReaction.Emoji)
         {
             await _projectsRepository.DeleteReaction(existingReaction);

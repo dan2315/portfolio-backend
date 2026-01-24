@@ -15,7 +15,7 @@ public static class ProjectTypeMapper
             .ToDictionary(g => g.Key, g => g.Count());
 
         var selectedEmoji = p.Reactions
-            .FirstOrDefault(r => r.AnonymousSessionId == anonSession)
+            .FirstOrDefault(r => r.AnonymousId == anonSession)
             ?.Emoji ?? string.Empty;
 
         var reactionsDTO = new ProjectReactionsDTO(

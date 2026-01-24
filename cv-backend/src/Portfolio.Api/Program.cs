@@ -1,9 +1,11 @@
 using System.Text.Json;
 using Portfolio.Api.Configuration;
+using Portfolio.Api.Controllers;
 using Portfolio.Application;
 using Portfolio.Application.Options;
 using Portfolio.Application.StaticContent;
 using Portfolio.Infrastructure;
+using Portfolio.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,7 @@ builder.Services.Configure<SendGridOptions>(builder.Configuration.GetSection("Se
 
 builder.Services.AddSingleton(sp => 
     new StaticContentPath(Path.Combine(sp.GetRequiredService<IWebHostEnvironment>().ContentRootPath, "StaticContent")));
-builder.Services.AddInfrastructure(conf);
+builder.Services.AddWebInfrastructure(conf);
 builder.Services.AddApplication();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -54,6 +56,7 @@ app.UseCors("Frontend");
 app.UseMiddleware<AnonymousSessionMiddleware>();
 app.UseMiddleware<ActivityTrackingMiddleware>();
 app.MapControllers();
+AnalyticsController.MapExtraRoutes(app);
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,5 +1,7 @@
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Portfolio.Domain.Entities;
+using Portfolio.Infrastructure.Cache;
 using Portfolio.Infrastructure.GitHub;
 using Portfolio.Infrastructure.GitHub.Cache;
 using RepositoryDynamicData = Portfolio.Infrastructure.GitHub.DTOs.RepositoryDynamicData;
@@ -9,13 +11,13 @@ public class GitHubClient : IGitHubClient
     private readonly HttpClient _httpClient;
     private readonly ParsedUrlCache<GitHubClient> _urlCache;
     private readonly GitHubIds _gitHubIds;
-    private readonly IMemoryCache _cache;
-    public GitHubClient(HttpClient httpClient, ParsedUrlCache<GitHubClient> urlCache, GitHubIds gitHubIds, IMemoryCache memoryCache)
+    private readonly IDistributedCache _cache;
+    public GitHubClient(HttpClient httpClient, ParsedUrlCache<GitHubClient> urlCache, GitHubIds gitHubIds, IDistributedCache cache)
     {
         _httpClient = httpClient;
         _urlCache = urlCache;
         _gitHubIds = gitHubIds;
-        _cache = memoryCache;
+        _cache = cache;
     }
 
     public async Task<ProjectRepository> GetRepository(string githubUrl)
@@ -68,15 +70,13 @@ public class GitHubClient : IGitHubClient
     {
         var cacheKey = $"github:repo:static:{owner}/{name}";
 
-        var cachedResponse = await _cache.GetOrCreateAsync(cacheKey, async entry =>
+        var cachedResponse = await _cache.GetOrCreateAsync(cacheKey, async () =>
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(8);
-
             return await _httpClient.ExecuteGraphqlAsync<RepositoryData>(
                 GitHubQuerries.RepoStaticDataQuery,
                 new { owner, name, id }
             );
-        }) ?? throw new Exception("PIZDAAAA"); // TODO
+        }, TimeSpan.FromHours(8)) ?? throw new Exception("Something went wrong with cache");
         return cachedResponse;
     }
 
@@ -84,15 +84,13 @@ public class GitHubClient : IGitHubClient
     {
         var cacheKey = $"github:repo:dynamic:{owner}/{name}";
 
-        var cachedResponse = await _cache.GetOrCreateAsync(cacheKey, async entry =>
+        var cachedResponse = await _cache.GetOrCreateAsync(cacheKey, async () =>
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20);
-
             return await _httpClient.ExecuteGraphqlAsync<RepositoryDynamicData>(
                 GitHubQuerries.RepoDynamicDataQuery,
                 new { owner, name }
             );
-        }) ?? throw new Exception("PIZDAAAA");
+        }, TimeSpan.FromMinutes(20)) ?? throw new Exception("Something went wrong with cache");
         return cachedResponse;
     }
 

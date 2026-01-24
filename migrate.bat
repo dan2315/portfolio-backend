@@ -6,8 +6,8 @@ echo   Portfolio Database Migrator
 echo ====================================
 echo.
 
-REM Load .env if POSTGRES_CONNECTION is not set
-if "%POSTGRES_CONNECTION%"=="" (
+REM Load .env if ConnectionStrings__Postgres is not set
+if "%ConnectionStrings__Postgres%"=="" (
     if exist ".env" (
         for /f "usebackq tokens=1* delims==" %%A in (".env") do (
             set "%%A=%%B"
@@ -15,12 +15,12 @@ if "%POSTGRES_CONNECTION%"=="" (
     )
 )
 
-REM Check if POSTGRES_CONNECTION is set
-if "%POSTGRES_CONNECTION%"=="" (
-    echo [ERROR] POSTGRES_CONNECTION environment variable is not set.
+REM Check if ConnectionStrings__Postgres is set
+if "%ConnectionStrings__Postgres%"=="" (
+    echo [ERROR] ConnectionStrings__Postgres environment variable is not set.
     echo.
     echo Please set it first:
-    echo   set POSTGRES_CONNECTION=Host=localhost;Database=portfolio;Username=postgres;Password=yourpass
+    echo   set ConnectionStrings__Postgres=Host=localhost;Database=portfolio;Username=postgres;Password=yourpass
     echo.
     echo Or create a .env file with the connection string.
     echo.
@@ -85,5 +85,5 @@ echo [INFO] Running migrations...
 echo.
 
 docker run --rm ^
-  -e POSTGRES_CONNECTION="%POSTGRES_CONNECTION%" ^
+  -e ConnectionStrings__Postgres="%ConnectionStrings__Postgres%" ^
   portfolio-migrator %DRY_RUN% %VERBOSE%

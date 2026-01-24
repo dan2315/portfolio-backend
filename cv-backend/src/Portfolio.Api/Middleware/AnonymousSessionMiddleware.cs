@@ -25,7 +25,7 @@ public class AnonymousSessionMiddleware
 
         if (Guid.TryParse(anonId, out var anonGuid))
         {
-            context.Items[Keys.AnonSessionGuidKey] = anonGuid;
+            context.Items[Keys.AnonIdCookieName] = anonGuid;
         }
 
         await _next(context);

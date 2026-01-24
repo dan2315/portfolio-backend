@@ -14,7 +14,7 @@ public class ProjectReactionsConfiguration : IEntityTypeConfiguration<ProjectRea
         .IsRequired()
         .HasMaxLength(50);
 
-        builder.Property(r => r.AnonymousSessionId)
+        builder.Property(r => r.AnonymousId)
         .IsRequired();
 
         builder.Property(r => r.CreatedAt)

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Portfolio.Api.Data;
 
 public class ActivityTrackingMiddleware
 {
@@ -32,10 +33,8 @@ public class ActivityTrackingMiddleware
             Method = context.Request.Method,
             StatusCode = context.Response.StatusCode,
             DurationMs = sw.ElapsedMilliseconds,
-            AnonymousSessionId = context.Items["AnonymousSessionId"] as Guid?,
-            UserId = context.User.Identity?.IsAuthenticated == true
-                ? context.User.FindFirst("sub")?.Value
-                : null,
+            SessionId = Guid.Parse(context.Request.Cookies[Keys.SessionIdCookieName]??""),
+            AnonymousId = context.Items[Keys.AnonIdCookieName] as Guid?,
             UserAgent = context.Request.Headers.UserAgent.ToString()
         });
     }
