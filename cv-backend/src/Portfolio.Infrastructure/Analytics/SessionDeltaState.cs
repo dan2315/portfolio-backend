@@ -4,6 +4,7 @@ namespace Workers.Analytics;
 
 public class SessionDeltaState
 {
+    public Guid AnonymousId { get; private set; }
     public Guid SessionId { get; private set; }
     public DateTimeOffset LeastStartTime { get; private set; }
     public DateTimeOffset GreatestEndTime { get; private set; }
@@ -14,6 +15,7 @@ public class SessionDeltaState
 
     public SessionDeltaState(ActivityEvent activityEvent)
     {
+        AnonymousId = activityEvent.AnonymousId.Value;
         SessionId = activityEvent.SessionId ?? throw new ArgumentException("Session cannot be created from event without Session ID");
         LeastStartTime = activityEvent.Timestamp;
         GreatestEndTime = activityEvent.TimeOnPageMs != null ?

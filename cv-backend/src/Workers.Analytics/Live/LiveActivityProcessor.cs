@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using Portfolio.Application.Analytics;
 using Portfolio.Infrastructure.Analytics;
+using Portfolio.Infrastructure.Analytics.Interfaces;
 using Portfolio.Infrastructure.RabbitMQ;
 using RabbitMQ.Client.Events;
 using StackExchange.Redis;
@@ -13,13 +14,14 @@ namespace Workers.Analytics.Live;
 public sealed class LiveAnalyticsProcessor : BackgroundService
 {
     private readonly RmqConnectionHolder _rmq;
-    private readonly LiveSessionsStore sessionsStore;
+    private readonly ILiveSessionsStore _sessionsStore;
     private readonly ConcurrentDictionary<Guid, (SessionDeltaState sessionDelta, List<ulong> deliveryTags)> _buffer = new();
     private readonly SemaphoreSlim _flushLock = new(1, 1);
 
-    public LiveAnalyticsProcessor(RmqConnectionHolder rmq, IConnectionMultiplexer connectionMultiplexer)
+    public LiveAnalyticsProcessor(RmqConnectionHolder rmq, ILiveSessionsStore sessionsStore)
     {
         _rmq = rmq;
+        _sessionsStore = sessionsStore;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -94,7 +96,7 @@ public sealed class LiveAnalyticsProcessor : BackgroundService
 
                     try
                     {
-                        await sessionsStore.StoreSessions(entry.sessionDelta);
+                        await _sessionsStore.StoreSessions(entry.sessionDelta);
                         
                         foreach (var tag in entry.deliveryTags)
                         {

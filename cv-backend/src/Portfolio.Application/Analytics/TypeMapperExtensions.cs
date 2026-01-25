@@ -22,8 +22,8 @@ public static class ActivitySessionMapper
     {
         return new SessionDTO(
             sessionId,
-            FromUnixMs(hash, "leastStart"),
-            FromUnixMs(hash, "greatestEnd"),
+            FromUnixMs(hash, "start"),
+            FromUnixMs(hash, "end"),
             GetInt(hash, "pagesViewed"),
             GetInt(hash, "cartridgesInserted"),
             GetInt(hash, "contactAttempted"),

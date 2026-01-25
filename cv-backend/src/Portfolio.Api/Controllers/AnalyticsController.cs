@@ -3,6 +3,7 @@ using Portfolio.Api.Data;
 using Portfolio.Application.Analytics;
 using Portfolio.Application.Analytics.DTOs;
 using Portfolio.Infrastructure.Analytics;
+using Portfolio.Infrastructure.Analytics.Interfaces;
 
 namespace Portfolio.Api.Controllers;
 
@@ -10,11 +11,11 @@ namespace Portfolio.Api.Controllers;
 [Route("analytics")]
 public class AnalyticsController : ControllerBase
 {
-    readonly LiveSessionsStore _liveSessionsStore;
+    readonly ILiveSessionsStore _liveSessionsStore;
     readonly ISessionRepository _sessionRepository;
     private readonly IActivityEventWriter _writer;
 
-    public AnalyticsController(IActivityEventWriter writer, LiveSessionsStore liveSessionsStore, ISessionRepository sessionRepository)
+    public AnalyticsController(IActivityEventWriter writer, ILiveSessionsStore liveSessionsStore, ISessionRepository sessionRepository)
     {
         _writer = writer;
         _liveSessionsStore = liveSessionsStore;
@@ -39,7 +40,7 @@ public class AnalyticsController : ControllerBase
     [HttpGet("live/sessions")]
     public async Task<ActionResult<IReadOnlyList<SessionDTO>>> SendLiveSnapshot([FromQuery] int limit = 50)
     {
-        var sessions = await _liveSessionsStore.GetSessions(limit);
+        var sessions = await _liveSessionsStore.GetSessions();
         return Ok(sessions);
     }
 
