@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
 namespace Portfolio.Api.Configuration;
 
 public static class AppConfigurationExtensions
@@ -22,5 +24,4 @@ public static class AppConfigurationExtensions
                 "https://www.portfolio.danielthedod.dev"
             ];
     }
-
 }

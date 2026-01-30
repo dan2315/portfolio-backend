@@ -1,10 +1,9 @@
 using Microsoft.Extensions.Hosting;
 using Portfolio.Application.Analytics;
-using Parquet;
 
 namespace Workers.Analytics.MockEventsGenerator;
 
-public sealed class MockEventsGenerator : BackgroundService
+public sealed class ParquetFilesGenerator : BackgroundService
 {
     private const string BucketName = "activity_sessions";
     private const int BatchSize = 50_000;

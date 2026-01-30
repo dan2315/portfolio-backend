@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Portfolio.Application.Analytics;
+using Portfolio.Application.Analytics.Interfaces;
 using Portfolio.Application.Messages;
 using Portfolio.Application.Messages.Interfaces;
 using Portfolio.Application.Projects;
@@ -8,12 +10,12 @@ namespace Portfolio.Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(
-        this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<ILeetCodeService, LeetCodeService>();
         services.AddScoped<IProjectsService, ProjectsService>();
         services.AddScoped<IMessagesService, MessagesService>();
+        services.AddScoped<IAnalyticsService, AnalyticsService>();
 
         return services;
     }

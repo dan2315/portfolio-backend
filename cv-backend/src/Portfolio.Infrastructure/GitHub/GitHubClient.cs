@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Portfolio.Application.Cache;
 using Portfolio.Domain.Entities;
-using Portfolio.Infrastructure.Cache;
 using Portfolio.Infrastructure.GitHub;
 using Portfolio.Infrastructure.GitHub.Cache;
 using RepositoryDynamicData = Portfolio.Infrastructure.GitHub.DTOs.RepositoryDynamicData;

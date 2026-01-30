@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "Analytics.Live";
+
+service SessionDeltaService {
+  rpc Emit (SessionDeltaMessage) returns (EmitAck);
+}
+
+message SessionDeltaMessage {
+  string type = 1;
+  string key = 2;
+  int64 version = 3;
+  SessionDeltaPayload payload = 4;
+}
+
+message SessionDeltaPayload {
+  string anonymousId = 1;
+  string sessionId = 2;
+  int64 leastStartTimeUnixMs = 3;
+  int64 greatestEndTimeUnixMs = 4;
+  int32 pagesViewed = 5;
+  int32 cartridgesInserted = 6;
+  int32 contactAttempts = 7;
+  int64 totalTimeMs = 8;
+  int64 sessionExpiresAtUnixMs = 9;
+}
+
+message EmitAck {
+  bool accepted = 1;
+}

@@ -13,8 +13,19 @@ public class SessionRepository : ISessionRepository
         _dbContext = dbContext;
     }
 
-    async Task<IReadOnlyList<ActivitySession>> ISessionRepository.GetAll()
+    public async Task<IReadOnlyList<ActivitySession>> GetAll()
     {
         return await _dbContext.ActivitySessions.ToListAsync();
+    }
+
+    public async Task<IReadOnlyList<DailyActivity>> GetDailyActivitiesAsyncBy(int year)
+    {
+        var start = new DateTime(year, 1, 1).ToUniversalTime();
+        var end = start.AddYears(1).ToUniversalTime();
+
+        return await _dbContext.DailyActivity
+            .AsNoTracking()
+            .Where(d => d.Date >= start && d.Date < end)
+            .ToListAsync();
     }
 }

@@ -1,8 +1,7 @@
 using Portfolio.Application.Analytics;
 using Portfolio.Application.Analytics.DTOs;
-using Portfolio.Infrastructure.Analytics.Interfaces;
+using Portfolio.Application.Analytics.Interfaces;
 using StackExchange.Redis;
-using Workers.Analytics;
 
 namespace Portfolio.Infrastructure.Analytics;
 
@@ -17,12 +16,18 @@ public class LiveSessionsStore : ILiveSessionsStore
         _redisDb = redis.GetDatabase();
     }
 
+    public async Task<SessionsHeatmap> GetHeatmapAsync()
+    {
+        return await Task.FromResult(new SessionsHeatmap());
+    }
+
     public async Task<IReadOnlyList<SessionDTO>> GetSessions()
     {
         var to = DateTime.UtcNow;
         var from = DateTime.UtcNow.AddHours(-8);
         return await GetSessions(from, to);
     }
+    
     public async Task<IReadOnlyList<SessionDTO>> GetSessions(DateTimeOffset from, DateTimeOffset to)
     {
         var sessions = new List<SessionDTO>();
@@ -70,6 +75,11 @@ public class LiveSessionsStore : ILiveSessionsStore
         }
 
         return sessions;
+    }
+
+    public Task StoreHeatmapAsync()
+    {
+        throw new NotImplementedException();
     }
 
     public async Task StoreSessions(SessionDeltaState state)

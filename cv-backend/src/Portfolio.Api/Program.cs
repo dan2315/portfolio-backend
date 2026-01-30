@@ -4,7 +4,7 @@ using Portfolio.Api.Controllers;
 using Portfolio.Application;
 using Portfolio.Application.Options;
 using Portfolio.Application.StaticContent;
-using Portfolio.Infrastructure;
+using Portfolio.Infrastructure.Analytics.InterappTransport;
 using Portfolio.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
 var conf = builder.Configuration;
 
+builder.ConfigureKestrelForDebug();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
@@ -57,6 +58,7 @@ app.UseMiddleware<AnonymousSessionMiddleware>();
 app.UseMiddleware<ActivityTrackingMiddleware>();
 app.MapControllers();
 AnalyticsController.MapExtraRoutes(app);
+app.MapGrpcService<SessionDeltaGrpcService>();
 
 if (app.Environment.IsDevelopment())
 {

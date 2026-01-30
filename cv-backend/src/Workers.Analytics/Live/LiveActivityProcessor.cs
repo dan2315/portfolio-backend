@@ -3,11 +3,10 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using Portfolio.Application.Analytics;
-using Portfolio.Infrastructure.Analytics;
-using Portfolio.Infrastructure.Analytics.Interfaces;
+using Portfolio.Application.Analytics.Interfaces;
+using Portfolio.Infrastructure.Analytics.InterappTransport;
 using Portfolio.Infrastructure.RabbitMQ;
 using RabbitMQ.Client.Events;
-using StackExchange.Redis;
 
 namespace Workers.Analytics.Live;
 
@@ -15,13 +14,15 @@ public sealed class LiveAnalyticsProcessor : BackgroundService
 {
     private readonly RmqConnectionHolder _rmq;
     private readonly ILiveSessionsStore _sessionsStore;
-    private readonly ConcurrentDictionary<Guid, (SessionDeltaState sessionDelta, List<ulong> deliveryTags)> _buffer = new();
+    private readonly SessionDeltaGrpcClient _grpcClient;
+    private readonly ConcurrentDictionary<Guid, BufferedSession> _buffer = new();
     private readonly SemaphoreSlim _flushLock = new(1, 1);
 
-    public LiveAnalyticsProcessor(RmqConnectionHolder rmq, ILiveSessionsStore sessionsStore)
+    public LiveAnalyticsProcessor(RmqConnectionHolder rmq, ILiveSessionsStore sessionsStore, SessionDeltaGrpcClient grpcClient)
     {
         _rmq = rmq;
         _sessionsStore = sessionsStore;
+        _grpcClient = grpcClient;
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -54,14 +55,13 @@ public sealed class LiveAnalyticsProcessor : BackgroundService
             var json = Encoding.UTF8.GetString(eventArgs.Body.Span);
             var activityEvent = JsonSerializer.Deserialize<ActivityEvent>(json) ?? throw new Exception("Failed to deserialize ActivityEvent");
 
-            var session = new SessionDeltaState(activityEvent);
             _buffer.AddOrUpdate(
                 activityEvent.SessionId!.Value,
-                _ => new(session, [eventArgs.DeliveryTag]),
+                _ => new BufferedSession(new SessionDeltaState(activityEvent), [eventArgs.DeliveryTag]),
                 (_, existing) =>
                 {
-                    existing.sessionDelta.ApplyEvent(activityEvent);
-                    existing.deliveryTags.Add(eventArgs.DeliveryTag);
+                    existing.SessionDelta.ApplyEvent(activityEvent);
+                    existing.DeliveryTags.Add(eventArgs.DeliveryTag);
                     return existing;
                 }
             );
@@ -91,24 +91,33 @@ public sealed class LiveAnalyticsProcessor : BackgroundService
             {
                 foreach (var (sessionId, buffered) in _buffer)
                 {
-                    if (!_buffer.TryRemove(sessionId, out var entry))
-                        continue;
-
                     try
                     {
-                        await _sessionsStore.StoreSessions(entry.sessionDelta);
-                        
-                        foreach (var tag in entry.deliveryTags)
+                        if (buffered.DeliveryTags.IsEmpty) continue;
+
+                        await _grpcClient.PublishSessionDeltaAsync(buffered.SessionDelta);
+                        await _sessionsStore.StoreSessions(buffered.SessionDelta);
+
+                        foreach (var tag in buffered.DeliveryTags)
                         {
                             Console.WriteLine($"Message with tag {tag} was processed");
                             await _rmq.Channel.BasicAckAsync(tag, multiple: false);
+                        }
+                        
+                        buffered.SessionDelta.Reset();
+                        buffered.DeliveryTags.Clear();
+
+                        if (buffered.SessionDelta.SessionExpiresAt <= DateTimeOffset.UtcNow)
+                        {
+                            _buffer.TryRemove(sessionId, out _);
+                            continue;
                         }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex);
 
-                        foreach (var tag in entry.deliveryTags)
+                        foreach (var tag in buffered.DeliveryTags)
                         {
                             await _rmq.Channel.BasicNackAsync(
                                 tag,
@@ -124,5 +133,17 @@ public sealed class LiveAnalyticsProcessor : BackgroundService
                 _flushLock.Release();
             }
         }
+    }
+}
+
+sealed class BufferedSession
+{
+    public SessionDeltaState SessionDelta { get; }
+    public ConcurrentBag<ulong> DeliveryTags { get; private set; }
+
+    public BufferedSession(SessionDeltaState delta, ConcurrentBag<ulong> deliveryTags)
+    {
+        SessionDelta = delta;
+        DeliveryTags = deliveryTags;
     }
 }

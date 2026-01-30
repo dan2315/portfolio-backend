@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Portfolio.Infrastructure.Analytics.InterappTransport;
 
 namespace Portfolio.Infrastructure.DependencyInjection;
 
@@ -18,7 +19,9 @@ public static class Infrastructure
     {
         return services
             .AddCoreInfrastructure(configuration)
-            .AddMessaging(configuration);
+            .AddMessaging(configuration)
+            .AddRealtime()
+            .AddSingleton<SessionDeltaGrpcClient>();
     }
 
     public static IServiceCollection AddMigratorInfrastructure(this IServiceCollection services, IConfiguration configuration)

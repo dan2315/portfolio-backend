@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Portfolio.Api.Data;
 using Portfolio.Application.Analytics;
 using Portfolio.Application.Analytics.DTOs;
+using Portfolio.Application.Analytics.Interfaces;
 using Portfolio.Infrastructure.Analytics;
-using Portfolio.Infrastructure.Analytics.Interfaces;
 
 namespace Portfolio.Api.Controllers;
 
@@ -11,15 +11,17 @@ namespace Portfolio.Api.Controllers;
 [Route("analytics")]
 public class AnalyticsController : ControllerBase
 {
-    readonly ILiveSessionsStore _liveSessionsStore;
-    readonly ISessionRepository _sessionRepository;
+    private readonly ILiveSessionsStore _liveSessionsStore;
+    private readonly ISessionRepository _sessionRepository;
     private readonly IActivityEventWriter _writer;
+    private readonly IAnalyticsService _analyticsService;
 
-    public AnalyticsController(IActivityEventWriter writer, ILiveSessionsStore liveSessionsStore, ISessionRepository sessionRepository)
+    public AnalyticsController(IAnalyticsService analyticsService, IActivityEventWriter writer, ILiveSessionsStore liveSessionsStore, ISessionRepository sessionRepository)
     {
         _writer = writer;
         _liveSessionsStore = liveSessionsStore;
         _sessionRepository = sessionRepository;
+        _analyticsService = analyticsService;
     }
 
     public static void MapExtraRoutes(WebApplication app)
@@ -63,5 +65,12 @@ public class AnalyticsController : ControllerBase
     {
         
         return Ok(new {message = "ok"});
+    }
+
+    [HttpGet("history/heatmap")]
+    public async Task<ActionResult<IReadOnlyList<SessionDTO>>> SendHistoryHeatmap([FromQuery] int year)
+    {
+        var heatmap = _analyticsService.GetOrComputeSessionsHeatmap(year);
+        return Ok(heatmap);
     }
 }

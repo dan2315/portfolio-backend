@@ -13,4 +13,9 @@ public class AnalyticsHub : Hub
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, "analytics-live");
     }
+
+    public static async Task BroadcastSession(IHubContext<AnalyticsHub> hubContext, object session, CancellationToken token)
+    {
+        await hubContext.Clients.Group("analytics-live").SendAsync("SessionUpdated", session, token);
+    }
 }

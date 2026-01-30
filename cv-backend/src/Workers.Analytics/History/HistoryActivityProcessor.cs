@@ -11,7 +11,7 @@ using RabbitMQ.Client.Events;
 
 namespace Workers.Analytics.History;
 
-public sealed class AnalyticsProcessor : BackgroundService
+public sealed class HistoryActivityProcessor : BackgroundService
 {
     private readonly ConcurrentDictionary<Guid, SessionDeltaState> _recentSessions = new();
     private readonly RmqConnectionHolder _rmq;
@@ -20,7 +20,7 @@ public sealed class AnalyticsProcessor : BackgroundService
     private const int MaxSessionsBeforeFlush = 1000;
     private readonly SemaphoreSlim _flushLock = new(1, 1);
 
-    public AnalyticsProcessor(IServiceScopeFactory scopeFactory, RmqConnectionHolder rmq)
+    public HistoryActivityProcessor(IServiceScopeFactory scopeFactory, RmqConnectionHolder rmq)
     {
         _scopeFactory = scopeFactory;
         _rmq = rmq;
@@ -143,8 +143,9 @@ public sealed class AnalyticsProcessor : BackgroundService
 
         foreach (var (sessionId, entry) in sessionsToFlush)
         {
-            values.Add($"(@p{i*7}, @p{i*7+1}, @p{i*7+2}, @p{i*7+3}, @p{i*7+4}, @p{i*7+5}, @p{i*7+6})");
+            values.Add($"(@p{i*7}, @p{i*7+1}, @p{i*7+2}, @p{i*7+3}, @p{i*7+4}, @p{i*7+5}, @p{i*7+6}, @p{i*7+7})");
             parameters.Add(entry.State.SessionId);
+            parameters.Add(entry.State.AnonymousId);
             parameters.Add(entry.State.LeastStartTime);
             parameters.Add(entry.State.GreatestEndTime);
             parameters.Add(entry.State.PagesViewed);
@@ -185,6 +186,7 @@ public sealed class AnalyticsProcessor : BackgroundService
         return $"""
         INSERT INTO activity_sessions (
             "SessionId",
+            "AnonymousId",
             "StartTime",
             "EndTime",
             "PagesViewed",

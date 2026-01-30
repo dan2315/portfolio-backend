@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio.Application.Analytics;
 using Portfolio.Domain.Entities;
+using Portfolio.Infrastructure.Entities;
 using Portfolio.Infrastructure.Persistence.Configurations;
 
 namespace Portfolio.Infrastructure.Persistence;
@@ -14,6 +15,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<ProjectReaction> ProjectReactions => Set<ProjectReaction>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<DailyActivity> DailyActivity => Set<DailyActivity>();
+    public DbSet<DailyActivityProgress> DailyActivityProgresses => Set<DailyActivityProgress>();  // here
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,5 +25,6 @@ public sealed class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProjectsConfiguration());
         modelBuilder.ApplyConfiguration(new ProjectReactionsConfiguration());
         modelBuilder.ApplyConfiguration(new MessagesConfiguration());
+        modelBuilder.ApplyConfiguration(new DailyActivitiesConfiguration());
     }
 }

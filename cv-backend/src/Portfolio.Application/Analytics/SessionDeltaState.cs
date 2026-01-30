@@ -1,6 +1,4 @@
-using Portfolio.Application.Analytics;
-
-namespace Workers.Analytics;
+namespace Portfolio.Application.Analytics;
 
 public class SessionDeltaState
 {
@@ -12,17 +10,17 @@ public class SessionDeltaState
     public int CartridgesInserted { get; private set; }
     public int ContactAttempts { get; private set; }
     public long TotalTimeMs { get; private set; }
+    public DateTimeOffset SessionExpiresAt { get; private set; }
 
     public SessionDeltaState(ActivityEvent activityEvent)
     {
         AnonymousId = activityEvent.AnonymousId.Value;
         SessionId = activityEvent.SessionId ?? throw new ArgumentException("Session cannot be created from event without Session ID");
         LeastStartTime = activityEvent.Timestamp;
-        GreatestEndTime = activityEvent.TimeOnPageMs != null ?
-            activityEvent.Timestamp.AddMilliseconds(activityEvent.TimeOnPageMs.Value) :
-            activityEvent.Timestamp;
+        GreatestEndTime = activityEvent.Timestamp;
         IncrementStat(activityEvent);
         TotalTimeMs = activityEvent.TimeOnPageMs??0;
+        SessionExpiresAt = GreatestEndTime + TimeSpan.FromMinutes(30);
     }
 
     public void ApplyEvent(ActivityEvent activityEvent)
@@ -35,18 +33,15 @@ public class SessionDeltaState
             LeastStartTime = activityEvent.Timestamp;
         }
 
-        var eventEndTime = activityEvent.TimeOnPageMs != null
-            ? activityEvent.Timestamp.AddMilliseconds(activityEvent.TimeOnPageMs.Value) // TODO: bug 2082 year
-            : activityEvent.Timestamp;
-
-        if (eventEndTime > GreatestEndTime)
+        if (activityEvent.Timestamp > GreatestEndTime)
         {
-            GreatestEndTime = eventEndTime;
+            GreatestEndTime = activityEvent.Timestamp;
         }
 
         IncrementStat(activityEvent);
 
         TotalTimeMs = (long)(GreatestEndTime - LeastStartTime).TotalMilliseconds;
+        SessionExpiresAt = GreatestEndTime + TimeSpan.FromMinutes(30);
     }
 
     public void IncrementStat(ActivityEvent activityEvent)
@@ -57,5 +52,12 @@ public class SessionDeltaState
             case "cartridge_inserted": this.CartridgesInserted++; break;
             case "contact_attempt": this.ContactAttempts++; break;
         } 
+    }
+
+    public void Reset()
+    {
+        PagesViewed = 0;
+        CartridgesInserted = 0;
+        ContactAttempts = 0;
     }
 }

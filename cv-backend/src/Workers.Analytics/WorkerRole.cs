@@ -4,5 +4,6 @@ public enum WorkerRole
 {
     Live,
     History,
-    Generator
+    Generator,
+    DailyActivityJob
 }

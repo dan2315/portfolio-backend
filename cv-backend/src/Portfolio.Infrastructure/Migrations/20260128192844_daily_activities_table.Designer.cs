@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Portfolio.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Portfolio.Infrastructure.Persistence;
 namespace Portfolio.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128192844_daily_activities_table")]
+    partial class daily_activities_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,9 +90,6 @@ namespace Portfolio.Infrastructure.Migrations
                     b.Property<string>("AdditionalData")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("AnonymousId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("CartridgesInserted")
                         .HasColumnType("integer");
 
@@ -115,8 +115,11 @@ namespace Portfolio.Infrastructure.Migrations
 
             modelBuilder.Entity("Portfolio.Domain.Entities.DailyActivity", b =>
                 {
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AverageSessionDurationMs")
                         .HasColumnType("integer");
@@ -130,9 +133,9 @@ namespace Portfolio.Infrastructure.Migrations
                     b.Property<int>("UniqueUsersCount")
                         .HasColumnType("integer");
 
-                    b.HasKey("Date");
+                    b.HasKey("Id");
 
-                    b.ToTable("daily_activity", (string)null);
+                    b.ToTable("daily_activities", (string)null);
                 });
 
             modelBuilder.Entity("Portfolio.Domain.Entities.Message", b =>
@@ -237,22 +240,6 @@ namespace Portfolio.Infrastructure.Migrations
                     b.HasIndex("ProjectId");
 
                     b.ToTable("project_reactions", (string)null);
-                });
-
-            modelBuilder.Entity("Portfolio.Infrastructure.Entities.DailyActivityProgress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("LastAggregatedDay")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DailyActivityProgresses");
                 });
 
             modelBuilder.Entity("Portfolio.Domain.Entities.ProjectReaction", b =>

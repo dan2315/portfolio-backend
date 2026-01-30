@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Portfolio.Infrastructure.Analytics;
 using Portfolio.Infrastructure.DependencyInjection;
 using Workers.Analytics;
 using Workers.Analytics.Configuration;
@@ -24,10 +25,14 @@ switch (role)
         builder.Services.AddHostedService<LiveAnalyticsProcessor>();
         break;
     case WorkerRole.History:
-        builder.Services.AddHostedService<AnalyticsProcessor>();
+        builder.Services.AddHostedService<HistoryActivityProcessor>();
         break;
     case WorkerRole.Generator:
-        builder.Services.AddHostedService<MockEventsGenerator>();
+        builder.Services.AddHostedService<MockEventPusher>();
+        break;
+    case WorkerRole.DailyActivityJob:
+        builder.Services.AddScoped<DailyActivityAggregator>();
+        builder.Services.AddHostedService<DailyActivityJob>();
         break;
     default: 
         throw new ArgumentException("Configuration for worker is not provided");

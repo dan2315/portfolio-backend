@@ -6,6 +6,7 @@ public class ActivitySession
 {
     [Key]
     public Guid SessionId { get; set; }
+    public Guid AnonymousId { get; set; }
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
     public int PagesViewed { get; set; }
